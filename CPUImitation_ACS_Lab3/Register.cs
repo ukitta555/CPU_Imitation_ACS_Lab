@@ -13,7 +13,7 @@ namespace CPUImitation_ACS_Lab3
             set;
         }
 
-        Register(byte[] register) 
+        public Register(byte[] register) 
         {
             this.register = register;
         }

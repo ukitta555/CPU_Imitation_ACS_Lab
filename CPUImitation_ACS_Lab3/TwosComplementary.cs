@@ -26,7 +26,7 @@ namespace CPUImitation_ACS_Lab3
             int i = 0;
             while (number > 0) 
             {
-                result[22 - i - 1] = (byte)(number % 2);
+                result[REGISTRY_SIZE - i - 1] = (byte)(number % 2);
                 number /= 2;
                 i++;
             }
@@ -40,7 +40,7 @@ namespace CPUImitation_ACS_Lab3
             Console.WriteLine();
 
             // inverting number representation
-            for (int j = 0; j < 22; j++)
+            for (int j = 0; j < REGISTRY_SIZE; j++)
             {
                 result[j] = (result[j] == 0)
                             ? (byte)1
@@ -58,6 +58,16 @@ namespace CPUImitation_ACS_Lab3
 
 
             // + 1 - getting two's complementary
+            byte[] arrayForOne = new byte[REGISTRY_SIZE];
+            for (int j = 0; j < REGISTRY_SIZE - 1; j++) 
+            {
+                arrayForOne[j] = 0;
+            }
+            arrayForOne[21] = 1;
+            result = Add(result, arrayForOne);
+
+
+            /*
             int additionalOne = 1;
             for (int j = 21; j >= 0; j--)
             {
@@ -72,7 +82,7 @@ namespace CPUImitation_ACS_Lab3
                 }
             }
 
-
+            */
 
             Console.WriteLine("After +1:");
             foreach (byte registryByte in result)
@@ -81,6 +91,26 @@ namespace CPUImitation_ACS_Lab3
             }
             Console.WriteLine();
 
+            return result;
+        }
+
+        public static byte[] Add(byte[] number1, byte[] number2) 
+        {
+            byte[] result = new byte[REGISTRY_SIZE];
+            int carry = 0;
+            for (int j = REGISTRY_SIZE - 1; j >= 0; j--)
+            {
+                if (number1[j] + number2[j] + carry > 1)
+                {
+                    result[j] = (byte)((number1[j] + number2[j] + carry) % 2);
+                    carry = 1;
+                }
+                else
+                {
+                    result[j] = (byte)(number1[j] + number2[j] + carry);
+                    carry = 0;
+                }
+            }
             return result;
         }
     }
