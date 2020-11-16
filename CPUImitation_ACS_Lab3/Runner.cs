@@ -86,58 +86,62 @@ namespace CPUImitation_ACS_Lab3
             }
             Console.WriteLine();
 
-            // inverting number representation
-            for (int j = 0; j < REGISTRY_SIZE; j++)
+
+            if (this.sign == Sign.MINUS) 
             {
-                result[j] = (result[j] == 0)
-                            ? (byte)1
-                            : (byte)0;
-
-            }
-
-
-            Console.WriteLine("Invertion:");
-            foreach (byte registryByte in result)
-            {
-                Console.Write(registryByte);
-            }
-            Console.WriteLine();
-
-
-            // + 1 - getting two's complementary
-            byte[] arrayForOne = new byte[REGISTRY_SIZE];
-            for (int j = 0; j < REGISTRY_SIZE - 1; j++)
-            {
-                arrayForOne[j] = 0;
-            }
-            arrayForOne[21] = 1;
-            result = Add(result, arrayForOne);
-
-
-            /*
-            int additionalOne = 1;
-            for (int j = 21; j >= 0; j--)
-            {
-                if (result[j] + additionalOne == 2)
+            
+                // inverting number representation
+                for (int j = 0; j < REGISTRY_SIZE; j++)
                 {
-                    result[j] = (byte)((result[j] + additionalOne) % 2);
+                    result[j] = (result[j] == 0)
+                                ? (byte)1
+                                : (byte)0;
+
                 }
-                else 
+
+
+                Console.WriteLine("Invertion:");
+                foreach (byte registryByte in result)
                 {
-                    result[j] = (byte)(result[j] + additionalOne);
-                    additionalOne = 0;
+                    Console.Write(registryByte);
                 }
+                Console.WriteLine();
+
+
+                // + 1 - getting two's complementary
+                byte[] arrayForOne = new byte[REGISTRY_SIZE];
+                for (int j = 0; j < REGISTRY_SIZE - 1; j++)
+                {
+                    arrayForOne[j] = 0;
+                }
+                arrayForOne[21] = 1;
+                result = Add(result, arrayForOne);
+
+
+                /*
+                int additionalOne = 1;
+                for (int j = 21; j >= 0; j--)
+                {
+                    if (result[j] + additionalOne == 2)
+                    {
+                        result[j] = (byte)((result[j] + additionalOne) % 2);
+                    }
+                    else 
+                    {
+                        result[j] = (byte)(result[j] + additionalOne);
+                        additionalOne = 0;
+                    }
+                }
+
+                */
+
+                Console.WriteLine("After +1:");
+                foreach (byte registryByte in result)
+                {
+                    Console.Write(registryByte);
+                }
+                Console.WriteLine();
             }
-
-            */
-
-            Console.WriteLine("After +1:");
-            foreach (byte registryByte in result)
-            {
-                Console.Write(registryByte);
-            }
-            Console.WriteLine();
-
             return result;
         }
 
