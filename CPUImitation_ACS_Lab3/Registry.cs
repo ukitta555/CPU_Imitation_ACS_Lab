@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CPUImitation_ACS_Lab3
 {
-    class Register
+    class Registry
     {
         private const int REGISTER_SIZE = 22;
         public byte[] RegisterArray 
@@ -13,7 +13,7 @@ namespace CPUImitation_ACS_Lab3
             set;
         }
 
-        public Register(byte[] registerArray) 
+        public Registry(byte[] registerArray) 
         {
             RegisterArray = registerArray;
         }

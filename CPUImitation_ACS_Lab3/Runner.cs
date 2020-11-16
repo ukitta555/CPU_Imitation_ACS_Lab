@@ -16,38 +16,101 @@ namespace CPUImitation_ACS_Lab3
         private int tacts = 0;
         private  bool isOverflow = false;
         private int commands = 0;
-        private static Stack<Register> CPU = new Stack<Register>();
+        private static Stack<Registry> CPU = new Stack<Registry>();
         public void Run() 
         {
-            string number = Console.ReadLine();
-            string number2 = Console.ReadLine();
-
-            try
+            string[] lines = System.IO.File.ReadAllLines(@"../../../operations.txt");
+            foreach (string line in lines)
             {
-                byte[] complementary = ComplementaryConvert(Convert.ToInt32(number));
-                Register register = new Register(complementary);
-                CPU.Push(register);
-                byte[] complementary1 = ComplementaryConvert(Convert.ToInt32(number2));
-                register = new Register(complementary1);
-                CPU.Push(register);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            byte[] tmp = new byte[REGISTRY_SIZE];
-            foreach (Register r in CPU)
-            {
-                tmp = Add(tmp, r.RegisterArray);
-            }
-
-
-            foreach (byte registryByte in tmp)
-            {
-                Console.Write(registryByte);
+                Console.WriteLine(line);
+                Console.WriteLine("___________________________________");
+                Parse(line);
             }
         }
+        public void PrintStuff() 
+        {
+            Console.WriteLine("Current command count: {0}", commands);
+            Console.WriteLine("Sign: {0}", sign);
+            Console.WriteLine("Overflow: {0}", isOverflow);
+            Console.WriteLine("Current tact: {0}", ++tacts);
+            if (tacts == 2) tacts = 0;
+            int regIndex = 0;
+            if (CPU.Count == 0)
+            {
+                Console.WriteLine("CPU stack is empty!");
+            }
+            else
+            {
+                foreach (Registry reg in CPU)
+                {
+                    regIndex++;
+                    Console.Write("Register {0}: ", regIndex);
+                    foreach (byte bit in reg.RegisterArray)
+                    {
+                        Console.Write(bit);
+                    }
+                    Console.WriteLine();
+                }
+            }
+            Console.WriteLine("___________________________________");
+        }
+        public void Parse (string s)
+        {
+            string[] tokens = s.Split(' ');
+            if (tokens[0] == "push")
+            {
+                PrintStuff();
+                try
+                {
+                    byte[] complementary = ComplementaryConvert(Convert.ToInt32(tokens[1]));
+                    Registry registry = new Registry(complementary);
+                    CPU.Push(registry);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("___________________________________");
+                    throw new Exception();
+                }
+                PrintStuff();
+                commands++;
+            }
+            else if (tokens[0] == "add")
+            {
 
+                PrintStuff();
+                try 
+                {
+
+                    if (CPU.Count >= 2)
+                    {
+                        byte[] number1 = CPU.Pop().RegisterArray;
+                        byte[] number2 = CPU.Pop().RegisterArray;
+                        byte[] result = Add(number1, number2);
+
+                        //create new registry for the result;
+                        Registry registry = new Registry(result);
+                        CPU.Push(registry);
+
+                        PrintStuff();
+
+                        commands++;
+                    }
+                    else throw new Exception("Not enough registries on stack!");
+                }
+                catch (Exception e) 
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("___________________________________");
+                    if (e.Message == "Not enough registries on stack!") throw new Exception();
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Wrong commands were passed to processor. Terminating....");
+                throw new Exception();
+            }
+        }
         public byte[] ComplementaryConvert(int number)
         {
             byte[] result = new byte[REGISTRY_SIZE];
@@ -78,6 +141,7 @@ namespace CPUImitation_ACS_Lab3
                 i++;
             }
 
+            /*
             Console.WriteLine("In binary representation:");
             i = 0;
             foreach (byte registryByte in result)
@@ -85,7 +149,7 @@ namespace CPUImitation_ACS_Lab3
                 Console.Write(registryByte);
             }
             Console.WriteLine();
-
+            */
 
             if (this.sign == Sign.MINUS) 
             {
@@ -99,14 +163,14 @@ namespace CPUImitation_ACS_Lab3
 
                 }
 
-
+                /*
                 Console.WriteLine("Invertion:");
                 foreach (byte registryByte in result)
                 {
                     Console.Write(registryByte);
                 }
                 Console.WriteLine();
-
+                */
 
                 // + 1 - getting two's complementary
                 byte[] arrayForOne = new byte[REGISTRY_SIZE];
@@ -134,17 +198,17 @@ namespace CPUImitation_ACS_Lab3
                 }
 
                 */
-
+                /*
                 Console.WriteLine("After +1:");
                 foreach (byte registryByte in result)
                 {
                     Console.Write(registryByte);
                 }
                 Console.WriteLine();
+                */
             }
             return result;
         }
-
         public byte[] Add(byte[] number1, byte[] number2)
         {
             byte[] result = new byte[REGISTRY_SIZE];
@@ -162,9 +226,24 @@ namespace CPUImitation_ACS_Lab3
                     carry = 0;
                 }
             }
+
+            int correspondingNumber = 0;
+            foreach (byte bit in result) 
+            {
+                
+            }
+            
+            // change sign if needed
+            if (result[0] == 1)
+            {
+                sign = Sign.MINUS;
+            }
+            else
+            {
+                sign = Sign.PLUS;
+            }
+
             return result;
         }
-
-
     }
 }
