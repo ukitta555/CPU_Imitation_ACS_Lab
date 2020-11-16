@@ -8,8 +8,8 @@ namespace CPUImitation_ACS_Lab3
     {
         enum Sign
         {
-            PLUS = 0,
-            MINUS = 1
+            MINUS = 0,
+            PLUS = 1
         }
         private Sign sign = Sign.PLUS;
         private const int REGISTRY_SIZE = 22;
@@ -20,6 +20,9 @@ namespace CPUImitation_ACS_Lab3
         public void Run() 
         {
             string[] lines = System.IO.File.ReadAllLines(@"../../../operations.txt");
+
+
+
             foreach (string line in lines)
             {
                 Console.WriteLine(line);
@@ -102,7 +105,7 @@ namespace CPUImitation_ACS_Lab3
                 {
                     Console.WriteLine(e.Message);
                     Console.WriteLine("___________________________________");
-                    if (e.Message == "Not enough registries on stack!") throw new Exception();
+                    throw new Exception();
                 }
             }
             else 
@@ -115,7 +118,7 @@ namespace CPUImitation_ACS_Lab3
         {
             byte[] result = new byte[REGISTRY_SIZE];
 
-            if (number > Math.Pow(2, REGISTRY_SIZE - 1))
+            if (number > Math.Pow(2, REGISTRY_SIZE - 1) - 1 || number < (-1) * Math.Pow(2, REGISTRY_SIZE - 1))
             {
                 isOverflow = true;
                 throw new Exception("Overflow happened my dudes....");
@@ -141,16 +144,6 @@ namespace CPUImitation_ACS_Lab3
                 i++;
             }
 
-            /*
-            Console.WriteLine("In binary representation:");
-            i = 0;
-            foreach (byte registryByte in result)
-            {
-                Console.Write(registryByte);
-            }
-            Console.WriteLine();
-            */
-
             if (this.sign == Sign.MINUS) 
             {
             
@@ -163,15 +156,6 @@ namespace CPUImitation_ACS_Lab3
 
                 }
 
-                /*
-                Console.WriteLine("Invertion:");
-                foreach (byte registryByte in result)
-                {
-                    Console.Write(registryByte);
-                }
-                Console.WriteLine();
-                */
-
                 // + 1 - getting two's complementary
                 byte[] arrayForOne = new byte[REGISTRY_SIZE];
                 for (int j = 0; j < REGISTRY_SIZE - 1; j++)
@@ -180,37 +164,12 @@ namespace CPUImitation_ACS_Lab3
                 }
                 arrayForOne[21] = 1;
                 result = Add(result, arrayForOne);
-
-
-                /*
-                int additionalOne = 1;
-                for (int j = 21; j >= 0; j--)
-                {
-                    if (result[j] + additionalOne == 2)
-                    {
-                        result[j] = (byte)((result[j] + additionalOne) % 2);
-                    }
-                    else 
-                    {
-                        result[j] = (byte)(result[j] + additionalOne);
-                        additionalOne = 0;
-                    }
-                }
-
-                */
-                /*
-                Console.WriteLine("After +1:");
-                foreach (byte registryByte in result)
-                {
-                    Console.Write(registryByte);
-                }
-                Console.WriteLine();
-                */
             }
             return result;
         }
         public byte[] Add(byte[] number1, byte[] number2)
         {
+            Stack<int> carries = new Stack<int>();
             byte[] result = new byte[REGISTRY_SIZE];
             int carry = 0;
             for (int j = REGISTRY_SIZE - 1; j >= 0; j--)
@@ -219,20 +178,22 @@ namespace CPUImitation_ACS_Lab3
                 {
                     result[j] = (byte)((number1[j] + number2[j] + carry) % 2);
                     carry = 1;
+                    carries.Push(carry);
                 }
                 else
                 {
                     result[j] = (byte)(number1[j] + number2[j] + carry);
                     carry = 0;
+                    carries.Push(carry);
                 }
             }
 
-            int correspondingNumber = 0;
-            foreach (byte bit in result) 
+            int lastCarry = carries.Pop();
+            int beforeLastCarry = carries.Pop();
+            if ((lastCarry == 1 && beforeLastCarry == 0) || (lastCarry == 0 && beforeLastCarry == 1)) 
             {
-                
+                throw new Exception("Overflow happened my dudes...");
             }
-            
             // change sign if needed
             if (result[0] == 1)
             {
